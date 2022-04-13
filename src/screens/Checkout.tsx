@@ -50,18 +50,12 @@ const Checkout = () => {
       .string()
       .required()
       .label('Credit card')
-      .transform((_, value: string) => {
-        const stringArray = value.split('');
-        for (let item of stringArray) {
-          const index = stringArray.indexOf(item);
-          if (index + (1 % 4) === 0) {
-            stringArray.splice(index + 1, 0, ' ');
-          }
-        }
-        // return stringArray.join('');
-        return 'a';
-      }),
-    expiration: yup.string().required().label('Expiration date'),
+      .min(19, 'Please enter a valid credit card number'),
+    expiration: yup
+      .string()
+      .required()
+      .label('Expiration date')
+      .min(4, 'Please enter a valid expiration date'),
     cvc: yup.string().required().label('CVC'),
   });
 
