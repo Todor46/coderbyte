@@ -14,6 +14,7 @@ interface Props {
 const EventSection = ({ events, control, errors }: Props) => {
   return (
     <View style={styles.container}>
+      <Text style={styles.sectionTitle}>Tickets</Text>
       <Text style={styles.label}>Select your show</Text>
       <ControledSelect
         data={events.map((item: Event) => ({
@@ -59,5 +60,11 @@ const styles = StyleSheet.create({
   },
   item: {
     marginVertical: 8,
+  },
+  sectionTitle: {
+    color: Colors.text,
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 12,
   },
 });
