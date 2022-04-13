@@ -1,22 +1,20 @@
 import React from 'react';
 import Loading from './src/components/Loading/Loading';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-} from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StoreProvider from './src/store/StoreContext';
-import Checkout from './src/screens/Checkout';
 import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import RootNavigator from './src/navigation/RootNavigator';
 
 const App = () => {
   return (
     <StoreProvider>
-      <GestureHandlerRootView style={styles.container}>
-        <Loading />
-        <ScrollView style={styles.scrollContainer}>
-          <Checkout />
-        </ScrollView>
-      </GestureHandlerRootView>
+      <NavigationContainer>
+        <GestureHandlerRootView style={styles.container}>
+          <Loading />
+          <RootNavigator />
+        </GestureHandlerRootView>
+      </NavigationContainer>
     </StoreProvider>
   );
 };

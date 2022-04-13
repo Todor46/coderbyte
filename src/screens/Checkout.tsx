@@ -11,6 +11,8 @@ import TextInput from '../components/ControledFormComponents/TextInput';
 import EventSection from '../components/Checkout/EventSection';
 import Colors from '../config/colors';
 import Button from '../components/Button/Button';
+import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export interface Event {
   id: string;
@@ -39,6 +41,7 @@ const events: Event[] = new Array(20).fill(null).map(() => ({
 const Checkout = () => {
   const [totalOpen, setTotalOpen] = useState(false);
   const { dispatch } = useStore();
+  const { navigate } = useNavigation();
 
   const schema = yup.object().shape({
     event: yup.string().required().label('Show'),
@@ -74,6 +77,7 @@ const Checkout = () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     setTimeout(() => {
       dispatch({ type: 'SET_LOADING', payload: false });
+      navigate('Completed');
     }, 3000);
   };
 
@@ -85,7 +89,7 @@ const Checkout = () => {
   const processingFee = 2.95;
 
   const ticketsPrice =
-    event && quantity ? parseInt(event?.price) * quantity : 0;
+    event && quantity ? parseInt(event?.price, 10) * quantity : 0;
 
   const total =
     event && quantity
@@ -93,7 +97,7 @@ const Checkout = () => {
       : 0;
 
   return (
-    <>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Checkout page</Text>
       <EventSection events={events} control={control} errors={errors} />
       <View style={styles.section}>
@@ -207,13 +211,16 @@ const Checkout = () => {
       <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
         Purchase
       </Button>
-    </>
+    </ScrollView>
   );
 };
 
 export default Checkout;
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
   title: {
     fontSize: 20,
     fontWeight: '500',
