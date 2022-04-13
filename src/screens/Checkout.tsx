@@ -222,7 +222,11 @@ const Checkout = () => {
           </Text>
         }
       />
-      <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
+      <Button
+        variant="success"
+        onPress={handleSubmit(onSubmit)}
+        style={styles.button}
+      >
         Purchase
       </Button>
     </ScrollView>
