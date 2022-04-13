@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../../config/colors';
 
 type ButtonType = 'filled' | 'outline' | 'text';
-type ButtonVariant = 'primary' | 'success' | 'danger';
+type ButtonVariant = 'primary' | 'success' | 'successDark' | 'danger';
 
 interface ButtonProps {
   children: ReactNode;
@@ -64,7 +64,7 @@ const containerStyles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   success: {
-    backgroundColor: Colors.success,
+    backgroundColor: Colors.successDark,
   },
 });
 
