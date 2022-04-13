@@ -39,7 +39,7 @@ const events: Event[] = new Array(20).fill(null).map(() => ({
 }));
 
 const Checkout = () => {
-  const [totalOpen, setTotalOpen] = useState(false);
+  const [totalOpen, setTotalOpen] = useState(true);
   const { dispatch } = useStore();
   const { navigate } = useNavigation();
 
