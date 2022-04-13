@@ -98,7 +98,9 @@ const Checkout = () => {
       <Text style={styles.title}>Checkout page</Text>
       <EventSection events={events} control={control} errors={errors} />
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Payment info</Text>
+        <Text style={styles.sectionTitle}>
+          Payment <Icon name="check-circle" color={Colors.success} size={20} />
+        </Text>
         <Text style={styles.label}>Credit card number</Text>
         <TextInput
           name="creditCard"
@@ -205,6 +207,7 @@ const Checkout = () => {
           </>
         )}
       </View>
+      <Text style={styles.text}>* All sales are final - No refunds</Text>
       <Checkbox
         name="terms"
         control={control}
@@ -222,13 +225,12 @@ const Checkout = () => {
           </Text>
         }
       />
-      <Button
-        variant="success"
-        onPress={handleSubmit(onSubmit)}
-        style={styles.button}
-      >
-        Purchase
+      <Button variant="successDark" onPress={handleSubmit(onSubmit)}>
+        Place order
       </Button>
+      <Text style={styles.smallText}>
+        *Exceptions may apply, see our Terms of Use
+      </Text>
     </ScrollView>
   );
 };
@@ -289,9 +291,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 4,
   },
-  button: {
-    marginBottom: 24,
-  },
   terms: {
     fontWeight: '500',
     color: Colors.text,
@@ -300,5 +299,16 @@ const styles = StyleSheet.create({
   termsLink: {
     fontWeight: '500',
     color: Colors.primary,
+  },
+  text: {
+    fontWeight: '500',
+    color: Colors.text,
+  },
+  smallText: {
+    fontSize: 12,
+    marginTop: 8,
+    marginBottom: 30,
+    color: Colors.text,
+    fontWeight: '500',
   },
 });
