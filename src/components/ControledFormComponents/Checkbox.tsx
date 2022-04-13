@@ -41,6 +41,8 @@ const Checkbox = ({
             <CheckBox
               tintColors={{ true: Colors.primary }}
               onCheckColor={Colors.primary}
+              boxType="square"
+              style={styles.checkbox}
               onValueChange={onChange}
               value={value}
             />
@@ -61,5 +63,9 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  checkbox: {
+    height: 24,
+    width: 24,
   },
 });

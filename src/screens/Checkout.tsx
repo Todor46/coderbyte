@@ -14,6 +14,7 @@ import Button from '../components/Button/Button';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Checkbox from '../components/ControledFormComponents/Checkbox';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface Event {
   id: string;
@@ -44,6 +45,7 @@ const Checkout = () => {
   const [totalOpen, setTotalOpen] = useState(true);
   const { dispatch } = useStore();
   const { navigate } = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const schema = yup.object().shape({
     event: yup.string().required().label('Show'),
@@ -94,144 +96,149 @@ const Checkout = () => {
       : 0;
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Checkout page</Text>
-      <EventSection events={events} control={control} errors={errors} />
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
-          Payment <Icon name="check-circle" color={Colors.success} size={20} />
-        </Text>
-        <Text style={styles.label}>Credit card number</Text>
-        <TextInput
-          name="creditCard"
+    <View style={{ paddingTop: insets.top }}>
+      <ScrollView style={[styles.container]}>
+        <Text style={styles.title}>Checkout page</Text>
+        <EventSection events={events} control={control} errors={errors} />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Payment{' '}
+            <Icon name="check-circle" color={Colors.success} size={20} />
+          </Text>
+          <Text style={styles.label}>Credit card number</Text>
+          <TextInput
+            name="creditCard"
+            control={control}
+            errors={errors}
+            containerStyle={styles.item}
+            placeholder="XXXX XXXX XXXX XXXX"
+            keyboardType="number-pad"
+            transform={(value: string) => {
+              if (!value) {
+                return value;
+              }
+              const stringArray = value
+                .split('')
+                .filter((char) => char !== ' ');
+
+              const formated = stringArray.map((data, index) => {
+                if ((index + 1) % 4 === 0 && index !== stringArray.length - 1) {
+                  data += ' ';
+                }
+                return data;
+              });
+              return formated.join('').substring(0, 19);
+            }}
+          />
+          <View style={styles.horizontal}>
+            <View style={styles.horizontalItem}>
+              <Text style={styles.label}>Expiration date</Text>
+              <TextInput
+                name="expiration"
+                control={control}
+                errors={errors}
+                containerStyle={styles.item}
+                placeholder="MM/YY"
+                keyboardType="number-pad"
+                transform={(value: string) => {
+                  if (!value) {
+                    return value;
+                  }
+                  const stringArray = value
+                    .split('')
+                    .filter((char) => char !== '/');
+                  if (stringArray.length > 2) {
+                    stringArray.splice(2, 0, '/');
+                  }
+                  return stringArray.join('').substring(0, 5);
+                }}
+              />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.horizontalItem}>
+              <Text style={styles.label}>CVC</Text>
+              <TextInput
+                name="cvc"
+                control={control}
+                errors={errors}
+                containerStyle={styles.item}
+                placeholder="Security code"
+                keyboardType="number-pad"
+                transform={(value: string) => value && value.substring(0, 3)}
+              />
+            </View>
+          </View>
+        </View>
+        <View style={styles.section}>
+          <View
+            style={[
+              styles.horizontal,
+              // eslint-disable-next-line react-native/no-inline-styles
+              { justifyContent: 'space-between', alignItems: 'baseline' },
+            ]}
+          >
+            <Text style={styles.sectionTitle}>Total</Text>
+            <View style={styles.totalContainer}>
+              <Text style={styles.totalText}>${total}</Text>
+              <Pressable onPress={() => setTotalOpen(!totalOpen)}>
+                <Icon
+                  name={totalOpen ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  color={Colors.border}
+                />
+              </Pressable>
+            </View>
+          </View>
+          {totalOpen && (
+            <>
+              <Text style={styles.label}>Tickets</Text>
+              <View style={styles.feeContainer}>
+                <Text>
+                  Resale tickets:{' '}
+                  {event && quantity && `$${event.price} x ${quantity}`}
+                </Text>
+                <Text>${ticketsPrice}</Text>
+              </View>
+              <Text style={styles.label}>Fees</Text>
+              <View style={styles.feeContainer}>
+                <Text>
+                  Service Fee: {quantity && `$${serviceFee} x ${quantity}`}
+                </Text>
+                <Text>${serviceFeeTotal}</Text>
+              </View>
+              <View style={styles.feeContainer}>
+                <Text>Order Processing Fee</Text>
+                <Text>${processingFee}</Text>
+              </View>
+            </>
+          )}
+        </View>
+        <Text style={styles.text}>* All sales are final - No refunds</Text>
+        <Checkbox
+          name="terms"
           control={control}
           errors={errors}
-          containerStyle={styles.item}
-          placeholder="XXXX XXXX XXXX XXXX"
-          keyboardType="number-pad"
-          transform={(value: string) => {
-            if (!value) {
-              return value;
-            }
-            const stringArray = value.split('').filter((char) => char !== ' ');
-
-            const formated = stringArray.map((data, index) => {
-              if ((index + 1) % 4 === 0 && index !== stringArray.length - 1) {
-                data += ' ';
-              }
-              return data;
-            });
-            return formated.join('').substring(0, 19);
-          }}
-        />
-        <View style={styles.horizontal}>
-          <View style={styles.horizontalItem}>
-            <Text style={styles.label}>Expiration date</Text>
-            <TextInput
-              name="expiration"
-              control={control}
-              errors={errors}
-              containerStyle={styles.item}
-              placeholder="MM/YY"
-              keyboardType="number-pad"
-              transform={(value: string) => {
-                if (!value) {
-                  return value;
-                }
-                const stringArray = value
-                  .split('')
-                  .filter((char) => char !== '/');
-                if (stringArray.length > 2) {
-                  stringArray.splice(2, 0, '/');
-                }
-                return stringArray.join('').substring(0, 5);
-              }}
-            />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.horizontalItem}>
-            <Text style={styles.label}>CVC</Text>
-            <TextInput
-              name="cvc"
-              control={control}
-              errors={errors}
-              containerStyle={styles.item}
-              placeholder="Security code"
-              keyboardType="number-pad"
-              transform={(value: string) => value && value.substring(0, 3)}
-            />
-          </View>
-        </View>
-      </View>
-      <View style={styles.section}>
-        <View
-          style={[
-            styles.horizontal,
-            // eslint-disable-next-line react-native/no-inline-styles
-            { justifyContent: 'space-between', alignItems: 'baseline' },
-          ]}
-        >
-          <Text style={styles.sectionTitle}>Total</Text>
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalText}>${total}</Text>
-            <Pressable onPress={() => setTotalOpen(!totalOpen)}>
-              <Icon
-                name={totalOpen ? 'chevron-up' : 'chevron-down'}
-                size={16}
-                color={Colors.border}
-              />
-            </Pressable>
-          </View>
-        </View>
-        {totalOpen && (
-          <>
-            <Text style={styles.label}>Tickets</Text>
-            <View style={styles.feeContainer}>
-              <Text>
-                Resale tickets:{' '}
-                {event && quantity && `$${event.price} x ${quantity}`}
+          containerStyle={styles.checkbox}
+          label={
+            <Text style={styles.terms}>
+              I have read and agree to the current{' '}
+              <Text
+                style={styles.termsLink}
+                onPress={() => Linking.openURL('https://www.google.com')}
+              >
+                Terms of Use
               </Text>
-              <Text>${ticketsPrice}</Text>
-            </View>
-            <Text style={styles.label}>Fees</Text>
-            <View style={styles.feeContainer}>
-              <Text>
-                Service Fee: {quantity && `$${serviceFee} x ${quantity}`}
-              </Text>
-              <Text>${serviceFeeTotal}</Text>
-            </View>
-            <View style={styles.feeContainer}>
-              <Text>Order Processing Fee</Text>
-              <Text>${processingFee}</Text>
-            </View>
-          </>
-        )}
-      </View>
-      <Text style={styles.text}>* All sales are final - No refunds</Text>
-      <Checkbox
-        name="terms"
-        control={control}
-        errors={errors}
-        containerStyle={styles.item}
-        label={
-          <Text style={styles.terms}>
-            I have read and agree to the current{' '}
-            <Text
-              style={styles.termsLink}
-              onPress={() => Linking.openURL('https://www.google.com')}
-            >
-              Terms of Use
             </Text>
-          </Text>
-        }
-      />
-      <Button variant="successDark" onPress={handleSubmit(onSubmit)}>
-        Place order
-      </Button>
-      <Text style={styles.smallText}>
-        *Exceptions may apply, see our Terms of Use
-      </Text>
-    </ScrollView>
+          }
+        />
+        <Button variant="successDark" onPress={handleSubmit(onSubmit)}>
+          Place order
+        </Button>
+        <Text style={styles.smallText}>
+          *Exceptions may apply, see our Terms of Use
+        </Text>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -310,5 +317,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     color: Colors.text,
     fontWeight: '500',
+  },
+  checkbox: {
+    marginVertical: 16,
   },
 });
