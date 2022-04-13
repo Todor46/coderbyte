@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { useForm, useWatch } from 'react-hook-form';
@@ -13,6 +13,7 @@ import Colors from '../config/colors';
 import Button from '../components/Button/Button';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import Checkbox from '../components/ControledFormComponents/Checkbox';
 
 export interface Event {
   id: string;
@@ -27,6 +28,7 @@ export interface FormData {
   creditCard: string;
   expiration: string;
   cvc: string;
+  terms: boolean;
 }
 
 const events: Event[] = new Array(20).fill(null).map(() => ({
@@ -57,6 +59,7 @@ const Checkout = () => {
       .label('Expiration date')
       .min(4, 'Please enter a valid expiration date'),
     cvc: yup.string().required().label('CVC'),
+    terms: yup.boolean().oneOf([true], 'Field must be checked.'),
   });
 
   const {
@@ -101,7 +104,7 @@ const Checkout = () => {
           name="creditCard"
           control={control}
           errors={errors}
-          containerStyle={styles.textInput}
+          containerStyle={styles.item}
           placeholder="XXXX XXXX XXXX XXXX"
           keyboardType="number-pad"
           transform={(value: string) => {
@@ -126,7 +129,7 @@ const Checkout = () => {
               name="expiration"
               control={control}
               errors={errors}
-              containerStyle={styles.textInput}
+              containerStyle={styles.item}
               placeholder="MM/YY"
               keyboardType="number-pad"
               transform={(value: string) => {
@@ -150,7 +153,7 @@ const Checkout = () => {
               name="cvc"
               control={control}
               errors={errors}
-              containerStyle={styles.textInput}
+              containerStyle={styles.item}
               placeholder="Security code"
               keyboardType="number-pad"
               transform={(value: string) => value && value.substring(0, 3)}
@@ -202,6 +205,23 @@ const Checkout = () => {
           </>
         )}
       </View>
+      <Checkbox
+        name="terms"
+        control={control}
+        errors={errors}
+        containerStyle={styles.item}
+        label={
+          <Text style={styles.terms}>
+            I have read and agree to the current{' '}
+            <Text
+              style={styles.termsLink}
+              onPress={() => Linking.openURL('https://www.google.com')}
+            >
+              Terms of Use
+            </Text>
+          </Text>
+        }
+      />
       <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
         Purchase
       </Button>
@@ -238,7 +258,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 12,
   },
-  textInput: {
+  item: {
     marginVertical: 8,
   },
   horizontal: {
@@ -267,5 +287,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: 24,
+  },
+  terms: {
+    fontWeight: '500',
+    color: Colors.text,
+    marginLeft: 8,
+  },
+  termsLink: {
+    fontWeight: '500',
+    color: Colors.primary,
   },
 });
