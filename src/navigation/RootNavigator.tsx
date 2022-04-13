@@ -8,9 +8,17 @@ const RootNavigator = () => {
   const Navigator = createNativeStackNavigator<RootStackParamList>();
 
   return (
-    <Navigator.Navigator screenOptions={{ headerShown: false }}>
-      <Navigator.Screen name="Checkout" component={Checkout} />
-      <Navigator.Screen name="Completed" component={Completed} />
+    <Navigator.Navigator>
+      <Navigator.Screen
+        name="Checkout"
+        component={Checkout}
+        options={{ headerShown: false }}
+      />
+      <Navigator.Screen
+        name="Completed"
+        component={Completed}
+        options={{ headerBackButtonMenuEnabled: true }}
+      />
     </Navigator.Navigator>
   );
 };
